@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -eu
+
+. debian/tests/common
+
+# manually build necessary files against the installed libseccomp
+
+# build live tests
+for filename in *-live-*.tests; do
+  testname=$(echo "$filename" | cut -f 1 -d '.')
+  echo "Building $testname ..."
+  gcc -O2 -g "${testname}.c" util.c -pthread -lseccomp -o "$testname"
+done
+
+echo "Running test suite ..."
+./regression -T live
